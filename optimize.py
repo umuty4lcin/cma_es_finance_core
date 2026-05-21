@@ -10,7 +10,7 @@ from core.ai_prep import prepare_lstm_data
 
 def optimize_global_parameters():
     print("="*60)
-    print("🧬 GLOBAL CMA-ES OPTİMİZASYONU BAŞLIYOR (SEPET STRATEJİSİ)")
+    print("GLOBAL CMA-ES OPTİMİZASYONU BAŞLIYOR (SEPET STRATEJİSİ)")
     print("="*60)
 
     model_path = 'data/global_lstm_model_15min.keras'

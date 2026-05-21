@@ -11,7 +11,7 @@ from core.ai_models import build_lstm_model
 
 def train_global_model(timeframe='15m'):
     print("="*60)
-    print("🌍 GLOBAL YAPAY ZEKA (SUPER BEYİN) EĞİTİMİ BAŞLIYOR")
+    print("GLOBAL YAPAY ZEKA EĞİTİMİ BAŞLIYOR")
     print("="*60)
     
     # Eğitime sokacağımız "Öğretmen" semboller
@@ -33,6 +33,12 @@ def train_global_model(timeframe='15m'):
             ai_df = create_features_and_target(clean_df, lookahead=15, threshold=0.001)
             
             features_to_use = ['close', 'kalman_close', 'feature_kalman_diff', 'feature_return_1m', 'feature_volatility_15m']
+
+            # YENİ HALİ (10 Özellikli):
+            # features_to_use = [
+            #     'close', 'kalman_close', 'feature_kalman_diff', 'feature_return_1m', 'feature_volatility_15m',
+            #     'feature_rsi_14', 'feature_macd_norm', 'feature_bb_position', 'feature_stoch_k', 'feature_sma50_diff'
+            # ]
             
             # Her sembol kendi içinde bölünür ve ölçeklenir (Scaler)
             X_train, y_train, X_test, y_test, _, _, _ = prepare_lstm_data(
@@ -80,7 +86,7 @@ def train_global_model(timeframe='15m'):
     early_stop = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
     checkpoint = ModelCheckpoint(model_save_path, monitor='val_loss', save_best_only=True)
     
-    print("\nEğitim Başlıyor! (Kemerlerinizi bağlayın, bu biraz uzun sürebilir...)")
+    print("\nEğitim Başlıyor! (Bu işlem biraz uzun sürebilir...)")
     history = model.fit(
         X_train_global, y_train_global,
         epochs=30, # Mega set olduğu için epoch sayısını biraz artırabiliriz

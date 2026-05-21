@@ -129,7 +129,7 @@ def run_vectorized_backtest(model, X_test, test_df, threshold=0.60, stop_loss=0.
     max_drawdown = drawdown.min() * 100
     
     print("\n" + "="*30)
-    print("🚀 FİNAL BACKTEST SONUÇLARI (GERÇEKÇİ)")
+    print("FİNAL BACKTEST SONUÇLARI (GERÇEKÇİ)")
     print("="*30)
     print(f"Toplam İşlem Sayısı   : {total_trades}")
     print(f"Kazanma Oranı (Win %) : %{win_rate:.2f}")

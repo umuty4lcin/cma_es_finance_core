@@ -71,7 +71,7 @@ def fast_backtest_evaluator(params, predictions, test_df, window_size=60, commis
 
 def run_cma_optimization(predictions, test_df, window_size=60):
     print("\n" + "="*50)
-    print("🧬 3 BOYUTLU CMA-ES EVRİMİ BAŞLIYOR (Gerçekçi Calmar Oranı)")
+    print("3 BOYUTLU CMA-ES EVRİMİ BAŞLIYOR (Calmar Oranı)")
     print("="*50)
     
     initial_params = [0.505, 0.015, 0.15] 
@@ -97,7 +97,7 @@ def run_cma_optimization(predictions, test_df, window_size=60):
     best_params = es.result.xbest
     
     print("="*50)
-    print("🏆 GERÇEKÇİ OPTİMİZASYON TAMAMLANDI!")
+    print("OPTİMİZASYON TAMAMLANDI!")
     print("="*50)
     
     return best_params[0], best_params[1], best_params[2]

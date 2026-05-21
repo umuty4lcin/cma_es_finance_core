@@ -2,12 +2,15 @@ import sqlite3
 import pandas as pd
 import os
 
-# Veritabanı dosyasının yolu (Proje kök dizininde oluşacak)
-DB_PATH = "market_data.db"
+# db_manager.py dosyasının bulunduğu klasörün tam yolunu otomatik bulur
+DB_DIR = os.path.dirname(os.path.abspath(__file__))
+# Veritabanı dosyasının bu klasörün içinde olduğunu belirtir
+DB_PATH = os.path.join(DB_DIR, 'market_data.db')
 
 def get_connection():
-    return sqlite3.connect(DB_PATH)
-
+    # Artık sistem nereden çalışırsa çalışsın, her zaman database/market_data.db'yi bulacak
+    conn = sqlite3.connect(DB_PATH)
+    return conn
 def init_db():
     """Veritabanını ve tabloları oluşturur."""
     conn = get_connection()

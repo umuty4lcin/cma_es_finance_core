@@ -63,7 +63,7 @@ def sync_symbol_data(symbol, period="15m"):
         start_ts = candles[-1]['timestamp'] + 1
         time.sleep(0.5) # API'yi yormamak için yarım saniye bekle
         
-    print(f"✅ [{symbol}] Senkronizasyon Tamamlandı. Toplam İndirilen: {total_fetched} | Yeni Eklenen: {total_saved}")
+    print(f"[{symbol}] Senkronizasyon Tamamlandı. Toplam İndirilen: {total_fetched} | Yeni Eklenen: {total_saved}")
 
 # Sadece bu dosya çalıştırılırsa test etmek için
 if __name__ == "__main__":

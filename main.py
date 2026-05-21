@@ -23,7 +23,7 @@ def save_to_excel(results_list, filename='backtest_sonuclari_v2.xlsx'):
 
 def main():
     print("="*50)
-    print("🚀 BİREYSEL OPTİMİZASYONLU BACKTEST MOTORU BAŞLATILIYOR")
+    print("BİREYSEL OPTİMİZASYONLU BACKTEST MOTORU BAŞLATILIYOR")
     print("="*50)
     
     symbol_list =  ['ASELS', 'GARAN', 'HALKB', 'ISCTR', 'THYAO', 'TUPRS', 'VAKBN', 'SASA', 'SISE', 'FROTO']
@@ -34,7 +34,7 @@ def main():
         print(f"\n[KRİTİK HATA] Eğitilmiş model ({model_path}) bulunamadı!")
         return
 
-    print("🧠 Süper Beyin (Global Model) yükleniyor...\n")
+    print("Süper Beyin (Global Model) yükleniyor...\n")
     best_model = load_model(model_path)
     results_summary = []
 
@@ -47,6 +47,12 @@ def main():
             ai_df = create_features_and_target(clean_df, lookahead=15, threshold=0.001)
             
             features_to_use = ['close', 'kalman_close', 'feature_kalman_diff', 'feature_return_1m', 'feature_volatility_15m']
+
+            # features_to_use = [
+            #     'close', 'kalman_close', 'feature_kalman_diff', 'feature_return_1m', 'feature_volatility_15m',
+            #     'feature_rsi_14', 'feature_macd_norm', 'feature_bb_position', 'feature_stoch_k', 'feature_sma50_diff'
+            # ]
+
             X_train, y_train, X_test, y_test, scaler, class_weights, test_df = prepare_lstm_data(
                 df=ai_df, feature_cols=features_to_use, window_size=60
             )
@@ -93,7 +99,7 @@ def main():
             print(f"[HATA] {symbol} işlenirken sorun oluştu: {e}")
 
     print("\n" + "="*50)
-    print("📊 YENİ HİBRİT PERFORMANS RAPORU (Global Beyin + Yerel Risk)")
+    print("YENİ HİBRİT PERFORMANS RAPORU (Global Beyin + Yerel Risk)")
     print("="*50)
     summary_df = pd.DataFrame(results_summary)
     print(summary_df.to_string(index=False))
