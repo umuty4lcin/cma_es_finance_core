@@ -1,313 +1,242 @@
-# 🚀 Hibrit Algoritmik Ticaret Motoru (Hybrid Algo-Trading Engine)
+# Hibrit Algoritmik Ticaret Motoru
 
-**Sürüm:** 2.0 *(Production-Grade)*  
-**Geliştiriciler:** Umut Yalçın & Rafet Emir Dilsiz  
-
----
-
-# 📖 1. Projeye Giriş
-
-Bu proje, finansal piyasalardaki (Borsa İstanbul, Kripto vb.) karmaşık fiyat hareketlerini analiz edip, insan duygularından arındırılmış tam otomatik alım-satım kararları veren ileri düzey bir yapay zeka sistemidir.
-
-Sistem, geleneksel “tek hisse ezberleyen” botların aksine **“Global Beyin + Yerel Risk” (Global Model + Local Risk)** felsefesiyle çalışır:
+**Surum:** 2.0 (Production-Grade)  
+**Gelistiriciler:** Umut Yalcin & Rafet Emir Dilsiz  
 
 ---
 
-## 🌍 Global Yapay Zeka
+## 1. Projeye Giris
 
-Bütün piyasanın (farklı sektörlerin) verilerini tek bir mega havuzda birleştirerek piyasanın genel davranışlarını öğrenir.
+Bu proje, finansal piyasalardaki (Borsa Istanbul, Kripto vb.) karmasik fiyat hareketlerini analiz edip, insan duygularından arindirilmis tam otomatik alim-satim kararlari veren ileri duzey bir yapay zeka sistemidir.
 
-Model yalnızca tek bir hisseyi ezberlemez; piyasanın:
+Sistem, geleneksel "tek hisse ezberleyen" botlarin aksine **"Global Beyin + Yerel Risk" (Global Model + Local Risk)** felsefesiyle calisir.
 
-- Trend davranışlarını
+---
+
+## Global Yapay Zeka
+
+Butun piyasanin (farkli sektorlerin) verilerini tek bir mega havuzda birlestirerek piyasanin genel davranislarini ogrenir.
+
+Model yalnizca tek bir hisseyi ezberlememez; piyasanin:
+
+- Trend davranislarini
 - Volatilite karakterini
-- Momentum geçişlerini
-- Psikolojik döngülerini
+- Momentum gecislerini
+- Psikolojik dongulerini
 
-öğrenmeye çalışır.
+ogrenmeye calisir.
 
 ---
 
-## 🛡️ Yerel Risk Yöneticisi
+## Yerel Risk Yoneticisi
 
-Her hisse senedinin kendi mikro-yapısına göre:
+Her hisse senedinin kendi mikro-yapisina gore dinamik Stop-Loss (SL) ve Take-Profit (TP) oranlari belirlenir:
 
 - Volatilite
-- Testere (Whipsaw) eğilimi
-- Momentum sertliği
-- Trend davranışı
-
-analiz edilerek, genetik algoritma yardımıyla dinamik:
-
-- **Stop-Loss (SL)**
-- **Take-Profit (TP)**
-
-oranları belirlenir.
+- Testere (Whipsaw) egilimi
+- Momentum sertligi
+- Trend davranisi
 
 ---
 
-# 📚 2. Terimler Sözlüğü
+## 2. Terimler Sozlugu
 
-## 📈 Finans ve Mimari Terimleri
+### Olay-Dongusu (Event-Driven) Backtest
 
-### 🔹 Olay-Döngülü (Event-Driven) Backtest
-
-Sanal bakiye illüzyonlarını ve vektörel hataları engelleyen, piyasa zaman akışını mum mum (*bar-by-bar*) simüle eden gerçekçi test motoru.
+Sanal bakiye iluzyonlarini ve vektorel hatalari engelleyen, piyasa zaman akisini mum mum (bar-by-bar) simule eden gercekci test motoru.
 
 ---
 
-### 🔹 Out-of-Universe (OOU) Test
+### Out-of-Universe (OOU) Test
 
-Yapay zekanın eğitim sırasında hiç görmediği yepyeni bir hisse veya sektör üzerinde test edilmesi.
+Yapay zekanin egitim sirasinda hic gormedigi yepyeni bir hisse veya sektor uzerinde test edilmesi.
 
-Örnek:
+Ornek:
+> Model egitimde FROTO'yu gormedi, testte basarili sonuc verdi.
 
-> Model eğitimde FROTO görmedi ama testte başarılı sonuç verdi.
-
-Bu durum modelin gerçekten genelleme yapabildiğini gösterir.
+Bu durum modelin gercekten genelleme yapabildigini gosterir.
 
 ---
 
-### 🔹 Calmar Ratio
+### Calmar Ratio
 
-Risk/ödül optimizasyon metriği:
+Risk/odul optimizasyon metrigi:
 
-```math
-\text{Calmar Ratio} = \frac{\text{Net Getiri}}{\text{Maximum Drawdown}}
+```
+Calmar Ratio = Net Getiri / Maximum Drawdown
 ```
 
-Genetik algoritmanın optimize ettiği ana performans skorudur.
+Genetik algoritmanin optimize ettigi ana performans skorudur.
 
 ---
 
-### 🔹 Stop-Loss (SL) & Take-Profit (TP)
+### Stop-Loss (SL) ve Take-Profit (TP)
 
-- **SL:** Zararı sınırlayan otomatik çıkış noktası
-- **TP:** Kârı realize eden otomatik çıkış noktası
-
----
-
-## 🤖 Yapay Zeka Terimleri
-
-### 🔹 LSTM (Long Short-Term Memory)
-
-Zaman serisi analizi yapan özel sinir ağı mimarisi.
-
-Örnek:
-
-> Son 60 mum → Gelecek fiyat davranışı tahmini
+- **SL:** Zarari sinirlandiran otomatik cikis noktasi
+- **TP:** Kari realize eden otomatik cikis noktasi
 
 ---
 
-### 🔹 Kalman Filtresi
+### LSTM (Long Short-Term Memory)
 
-Fiyat hareketlerindeki anlamsız sıçramaları ve gürültüyü temizleyen istatistiksel filtreleme yöntemi.
+Zaman serisi analizi yapan ozel sinir agi mimarisi.
 
----
-
-### 🔹 CMA-ES
-
-“En iyi parametre hayatta kalır” mantığıyla çalışan evrimsel optimizasyon algoritması.
-
-Amaç:
-
-> Maksimum getiri + Minimum risk
+Ornek:
+> Son 60 mum -> Gelecek fiyat davranisi tahmini
 
 ---
 
-# 🏗️ 3. Sistem Mimarisi (Katmanlar)
+### Kalman Filtresi
 
-Proje, tam otomatik ve modüler çalışan 5 ana katmandan oluşur.
-
----
-
-## 🔹 1. Otomatik Veri Hattı ve Veritabanı  
-`data_fetcher.py` & `db_manager.py`
-
-- CSV tabanlı yapı terk edilmiştir
-- SQLite tabanlı yüksek performanslı veri mimarisi kurulmuştur
-- Veriler SARDIS BIST API üzerinden artımlı (*incremental*) çekilir
-- Eksik zaman dilimleri (*gap*) otomatik doldurulur
-- Tüm piyasa verileri `market_data.db` içinde saklanır
+Fiyat hareketlerindeki anlamsiz sicramalari ve gurultuyu temizleyen istatistiksel filtreleme yontemi.
 
 ---
 
-## 🔹 2. Sinyal ve Öznitelik Mühendisliği  
-`signal_filters.py` & `feature_engineering.py`
+### CMA-ES
 
-Ham piyasa verileri doğrudan modele verilmez.
+"En iyi parametre hayatta kalir" mantigiyla calisan evrimsel optimizasyon algoritmasi.
 
-Önce:
+Amac: Maksimum getiri + Minimum risk
 
-- Kalman filtresi uygulanır
-- Gürültü azaltılır
-- Matematiksel öznitelikler üretilir
+---
 
-Üretilen bazı feature’lar:
+## 3. Sistem Mimarisi
+
+Proje, tam otomatik ve moduler calisan 5 ana katmandan olusur.
+
+---
+
+### Katman 1: Otomatik Veri Hatti ve Veritabani
+`data_fetcher.py` ve `db_manager.py`
+
+- SQLite tabanli yuksek performansli veri mimarisi
+- Veriler SARDIS BIST API uzerinden artimli (incremental) cekilir
+- Eksik zaman dilimleri (gap) otomatik doldurulur
+- Tum piyasa verileri `market_data.db` icinde saklanir
+
+---
+
+### Katman 2: Sinyal ve Oznitelik Muhendisligi
+`signal_filters.py` ve `feature_engineering.py`
+
+Ham piyasa verileri dogrudan modele verilmez:
+
+- Kalman filtresi uygulanir
+- Gurultu azaltilir
+- Matematiksel oznitelikler uretilir
+
+Uretilen oznitelikler:
 
 - Volatilite
-- Momentum farkları
-- Trend sapmaları
-- Fiyat değişim hızları
+- Momentum farklari
+- Trend sapmalar
+- Fiyat degisim hizlari
 
 ---
 
-## 🔹 3. Süper Beyin: Global LSTM Modeli  
+### Katman 3: Super Beyin - Global LSTM Modeli
 `train_model.py`
 
-Yapay zeka yalnızca tek bir hisse üzerinde eğitilmez.
+Farkli sektorlerden secilmis hisseler kullanilarak buyuk bir Mega Dataset olusturulur:
 
-Farklı sektörlerden seçilmiş “öğretmen hisseler” kullanılarak:
+- Havacilik (THYAO)
+- Bankacilik (GARAN, HALKB, ISCTR, VAKBN)
+- Savunma (ASELS)
+- Enerji / Petrokimya (TUPRS, SASA, SISE)
 
-- Havacılık
-- Bankacılık
-- Sanayi
-- Teknoloji
-
-gibi alanlardan büyük bir **Mega Dataset** oluşturulur.
-
-### 📌 Overfitting Önleme Teknikleri
-
-- Shuffle
-- Early Stopping
-- Multi-sector eğitim yaklaşımı
+Overfitting onleme teknikleri: Shuffle, Early Stopping, cok-sektor egitim.
 
 ---
 
-## 🔹 4. Genetik Optimizasyon  
+### Katman 4: Genetik Optimizasyon
 `cma_optimizer.py`
 
-Her hisse için ayrı ayrı çalışır.
+Her hisse icin ayri ayri calisir.
 
 Optimizasyon hedefi:
-
-- Maksimum kâr
+- Maksimum kar
 - Minimum drawdown
-- Gerçekçi risk yönetimi
+- Gercekci risk yonetimi
 
-### 📌 Güvenlik Kuralları
-
-Örnek:
-
-- `SL > %0.75` gibi mantıksız parametreler reddedilir
-- Hileli optimizasyonlar filtrelenir
-- Sistem batma riskine karşı korunur
+Guvenlik kurallari:
+- SL minimum %0.75 altindaki parametreler reddedilir
+- Az islem yapan (< 10) parametreler elenir
 
 ---
 
-## 🔹 5. Gerçekçi Backtest Motoru  
-`backtest_engine.py` & `main.py`
+### Katman 5: Event-Driven Backtest Motoru
+`backtest_engine.py` ve `main.py`
 
-### 📌 Sabit Kasa Modeli (Fixed Position Sizing)
+Sabit Kasa Modeli (Fixed Position Sizing): Her islem sabit sermaye ile acilir (10.000 TL).
 
-Her işlem sabit sermaye ile açılır.
+Bu yaklasim logaritmik buyume iluzyonlarini ve sahte performans sonuclarini engeller.
 
-Örnek:
-
-> Her işlem = 10.000 TL
-
-Bu yaklaşım:
-
-- Logaritmik büyüme illüzyonlarını
-- Gerçek dışı bileşik getirileri
-- Sahte performans sonuçlarını
-
-engeller.
-
-### 📊 Üretilen Çıktılar
-
-- Net Kâr
-- Gerçek İşlem Sayısı
+Uretilen ciktilar:
+- Net Kar
+- Gercek Islem Sayisi
 - Win Rate
 - Max Drawdown
-- Risk/Ödül Analizi
+- Risk/Odul Analizi
 
 ---
 
-## 📂 4. Proje Yapısı
+## 4. Proje Yapisi
 
-
-```plaintext
+```
 cma_es_finance_core/
-├── database/                   # Veritabanı Yönetimi
-│   ├── db_manager.py           # SQLite tablo ve sorgu yöneticisi
-│   └── market_data.db          # Milyonlarca mumu tutan yerel veritabanı
-│
-├── core/                       # Motorun İç Parçaları
-│   ├── data_fetcher.py         # SARDIS API'den veri indiren ahtapot
-│   ├── data_pipeline.py        # Eksik verileri dolduran tesisat
-│   ├── signal_filters.py       # Kalman filtresi ve sinyal temizleyiciler
-│   ├── feature_engineering.py  # LSTM için matematiksel öznitelik üreticisi
-│   ├── ai_prep.py              # Veri ölçekleme (MinMax) ve paketleme
-│   ├── ai_models.py            # LSTM mimarisinin tasarımı
-│   └── backtest_engine.py      # Olay-döngülü (Event-Driven) simülasyon motoru
-│
-├── optimizers/                 # Karar Mekanizmaları
-│   └── cma_optimizer.py        # Genetik Algoritma (Calmar Optimizasyonu)
-│
-├── train_model.py              # Global Süper Beyin'i eğiten modül
-├── main.py                     # Optimizasyon ve backtest orkestrasyonu
-└── backtest_sonuclari_v2.xlsx  # Nihai performans raporu
+|-- database/
+|   |-- db_manager.py           # SQLite tablo ve sorgu yoneticisi
+|   `-- market_data.db          # Milyonlarca mumu tutan yerel veritabani
+|
+|-- core/
+|   |-- data_fetcher.py         # SARDIS API'den veri indiren motor
+|   |-- data_pipeline.py        # Eksik verileri dolduran tesisat
+|   |-- signal_filters.py       # Kalman filtresi
+|   |-- feature_engineering.py  # LSTM icin oznitelik uretici
+|   |-- ai_prep.py              # Veri olcekleme (MinMax) ve paketleme
+|   |-- ai_models.py            # LSTM mimarisi
+|   `-- backtest_engine.py      # Event-driven simulasyon motoru
+|
+|-- optimizers/
+|   `-- cma_optimizer.py        # Genetik Algoritma (Calmar Optimizasyonu)
+|
+|-- data/
+|   `-- global_lstm_model_15min.keras  # Egitilmis global model
+|
+|-- train_model.py              # Global Super Beyin'i egiten modul
+|-- main.py                     # Optimizasyon ve backtest orkestrasyonu
+|-- dashboard.py                # Streamlit gorsel panel
+`-- backtest_sonuclari_v2.xlsx  # Nihai performans raporu
 ```
 
 ---
 
-# 💡 5. Sistemin Felsefesi ve Çıktı Analizi
+## 5. Sistemin Felsefesi
 
-Bu sürüm, eski vektörel backtest sistemlerinin ürettiği:
+Bu surum, eski vektorel backtest sistemlerinin urettigi gercek disi milyarlik getiriler, sonsuz bilesik buyume ve zaman akisi hatalarini tamamen reddeder.
 
-- Gerçek dışı milyarlık getiriler
-- Sonsuz bileşik büyüme
-- Zaman akışı hataları
-
-gibi problemleri tamamen reddeder.
-
-Bunun yerine:
-
-> Akademik olarak daha gerçekçi ve sürdürülebilir sonuçlar üretir.
+Bunun yerine akademik olarak savunulabilir, gercekci sonuclar uretir.
 
 ---
 
-## 📊 FROTO OOU Testi
+## FROTO OOU Testi
 
-Model eğitim sırasında FROTO verisini hiç görmediği halde:
+Model egitim sirasinda FROTO verisini hic gormedigi halde optimize parametreler bulup aylar icinde sabit kasayla yaklasik %35 net getiri saglayabilir.
 
-- `%0.75 SL`
-- `%16.24 TP`
-
-gibi parametreler bulup:
-
-> Aylar içerisinde sabit kasayla yaklaşık `%35` net getiri sağlayabilir.
-
-Bu, modelin yalnızca ezber yapmadığını; gerçekten piyasa davranışını öğrendiğini gösterir.
+Bu, modelin yalnizca ezber yapmadigini; gercekten piyasa davranisini ogrendigini gosterir.
 
 ---
 
-## ⚖️ Asimetrik Risk Yönetimi
+## Asimetrik Risk Yonetimi
 
-Sistem:
+Sistem dusuk kazanma oraniyla bile uzun vadede kar edebilir.
 
-- Düşük kazanma oranıyla bile
-- Uzun vadede kâr edebilir
+Ornek: %42 Win Rate ile pozitif getiri mumkundur.
 
-Örnek:
-
-> %42 Win Rate ile bile pozitif getiri mümkündür.
-
-Sebep:
-
-- Küçük zararlar
-- Büyük kazançlar
-- Sıkı risk kontrolü
+Sebep: Kucuk zararlar, buyuk kazanclar, siki risk kontrolu.
 
 ---
 
-# 🧠 Sistem Felsefesi
+## Lisans
 
-> “Biz yapay zekaya piyasanın kaosunu öğrettik, evrimsel algoritmaya ise o kaosta nasıl hayatta kalacağını...”
-
----
-
-
-# 📜 Lisans
 MIT License
