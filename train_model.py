@@ -72,7 +72,7 @@ def train_global_model(timeframe='15m'):
     input_shape = (X_train_global.shape[1], X_train_global.shape[2])
     model = build_lstm_model(input_shape)
 
-    early_stop = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
+    early_stop = EarlyStopping(monitor='val_loss', patience=8, restore_best_weights=True)
     checkpoint = ModelCheckpoint(model_save_path, monitor='val_loss', save_best_only=True)
 
     model.fit(

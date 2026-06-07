@@ -1,7 +1,6 @@
 import os
 import numpy as np
 import pandas as pd
-import openpyxl
 from tensorflow.keras.models import load_model
 
 from core.data_pipeline import load_and_fill_gaps
@@ -10,17 +9,6 @@ from core.feature_engineering import create_features_and_target
 from core.ai_prep import prepare_lstm_data
 from core.backtest_engine import run_backtest
 from optimizers.cma_optimizer import run_cma_optimization
-
-
-def save_to_excel(results_list, filename='backtest_sonuclari_v2.xlsx'):
-    df = pd.DataFrame(results_list)
-    with pd.ExcelWriter(filename, engine='openpyxl') as writer:
-        df.to_excel(writer, sheet_name='Performans Raporu', index=False)
-        worksheet = writer.sheets['Performans Raporu']
-        for i, col in enumerate(df.columns):
-            column_len = max(df[col].astype(str).map(len).max(), len(col)) + 2
-            worksheet.column_dimensions[chr(65 + i)].width = column_len
-    print(f"\n[BASARILI] Tum sonuclar '{filename}' dosyasina kaydedildi.")
 
 
 def main():
@@ -56,7 +44,6 @@ def main():
                 df=ai_df, feature_cols=features_to_use, window_size=60
             )
 
-            # Tahmin bir kez yapilir; hem CMA-ES hem backtest bu diziyi kullanir
             print(f"[{symbol}] Model tahmini yapiliyor...")
             predictions = best_model.predict(X_test, verbose=0)
 
@@ -97,7 +84,6 @@ def main():
     print("=" * 50)
     summary_df = pd.DataFrame(results_summary)
     print(summary_df.to_string(index=False))
-    save_to_excel(results_summary)
 
 
 if __name__ == "__main__":

@@ -18,3 +18,9 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# Office gecici kilit dosyalari
+~$*
+
+# Model yedekleri (gecici)
+*_v1_backup.keras

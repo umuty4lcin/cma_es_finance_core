@@ -69,15 +69,17 @@ def fast_backtest_evaluator(params, predictions, test_df, window_size=60, commis
     calmar_ratio = net_profit / (max_drawdown + 1.0)
     return -calmar_ratio # CMA-ES minimize ettiği için kârı (Calmar'ı) eksiyle döndürüyoruz
 
-def run_cma_optimization(predictions, test_df, window_size=60):
+def run_cma_optimization(predictions, test_df, window_size=60, seed=42):
     print("\n" + "="*50)
     print("3 BOYUTLU CMA-ES EVRİMİ BAŞLIYOR (Calmar Oranı)")
     print("="*50)
-    
-    initial_params = [0.505, 0.015, 0.15] 
-    sigma0 = 0.02 
-    
-    es = cma.CMAEvolutionStrategy(initial_params, sigma0, {'popsize': 20, 'maxiter': 30, 'verbose': -9})
+
+    initial_params = [0.505, 0.015, 0.15]
+    sigma0 = 0.02
+
+    # seed: Tekrarlanabilirlik icin (tez sonuclari her calistirmada ayni cikar)
+    es = cma.CMAEvolutionStrategy(initial_params, sigma0,
+                                  {'popsize': 20, 'maxiter': 30, 'verbose': -9, 'seed': seed})
     
     generation = 1
     while not es.stop():
