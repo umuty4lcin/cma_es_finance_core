@@ -204,9 +204,12 @@ cma_es_finance_core/
 |   `-- global_lstm_model_15min.keras  # Egitilmis global model
 |
 |-- train_model.py              # Global Super Beyin'i egiten modul
-|-- main.py                     # Optimizasyon ve backtest orkestrasyonu
-|-- dashboard.py                # Streamlit gorsel panel
-`-- backtest_sonuclari_v2.xlsx  # Nihai performans raporu
+|-- main.py                     # Tek-tek optimizasyon ve backtest orkestrasyonu
+|-- main_portfolio.py           # Paylasimli-sermaye portfoy backtest orkestrasyonu
+|
+|-- api/                        # FastAPI backend (React onyuzunu besler)
+|   `-- main.py
+`-- frontend/                   # React + Vite arayuz (gelistirme asamasinda)
 ```
 
 ---
