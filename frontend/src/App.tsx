@@ -55,10 +55,19 @@ function App() {
         {result && !loading && (
           <>
             <div className="params-bar">
-              <b>{result.symbol}</b> &nbsp;|&nbsp; Esik: %{(result.params.threshold * 100).toFixed(2)}
+              <b>{result.symbol}</b>
+              {result.model_type === '3class' ? (
+                <>
+                  &nbsp;|&nbsp; Long Esik: %{((result.params.long_threshold ?? 0) * 100).toFixed(2)}
+                  &nbsp;|&nbsp; Short Esik: %{((result.params.short_threshold ?? 0) * 100).toFixed(2)}
+                </>
+              ) : (
+                <> &nbsp;|&nbsp; Esik: %{((result.params.threshold ?? 0) * 100).toFixed(2)}</>
+              )}
               &nbsp;|&nbsp; SL: %{(result.params.stop_loss * 100).toFixed(2)}
               &nbsp;|&nbsp; TP: %{(result.params.take_profit * 100).toFixed(2)}
               &nbsp;|&nbsp; Mod: {result.params.mode}
+              {result.model_type === '3class' && <span className="badge" style={{ background: 'rgba(168,85,247,0.15)', color: '#c084fc' }}>3-sinifli (long+short)</span>}
               {result.params.auto_optimize && <span className="badge">CMA-ES optimize</span>}
             </div>
 

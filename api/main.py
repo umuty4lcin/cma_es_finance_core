@@ -42,26 +42,47 @@ def get_symbols():
 
 class AnalyzeRequest(BaseModel):
     symbol: str
+    model_type: str = "2class"        # '2class' (long-only) | '3class' (long+short)
     auto_optimize: bool = True
+    # 2-sinifli parametreler
     threshold: float = 0.50
     stop_loss: float = 0.02
     take_profit: float = 0.04
-    mode: str = "fixed"          # 'fixed' | 'compound'
-    allow_short: bool = False
+    mode: str = "fixed"               # 'fixed' | 'compound'
+    # 3-sinifli ek parametreler
+    long_threshold: float = 0.50
+    short_threshold: float = 0.50
 
 
 @app.post("/api/analyze")
 def analyze(req: AnalyzeRequest):
-    """Tek sembol icin tam analiz: tahmin + (opsiyonel CMA-ES) + backtest + grafik verileri."""
+    """Tek sembol icin tam analiz: tahmin + (opsiyonel CMA-ES) + backtest + grafik verileri.
+
+    model_type='2class' -> long-only ikili siniflandirma (mevcut R1)
+    model_type='3class' -> long+short softmax siniflandirma
+    """
     if req.symbol not in SYMBOLS:
         raise HTTPException(status_code=400, detail=f"Bilinmeyen sembol: {req.symbol}")
-    # Agir importu (TensorFlow) sadece gerektiginde yap
-    from api.engine import analyze_symbol
+    if req.model_type not in ("2class", "3class"):
+        raise HTTPException(status_code=400, detail=f"Gecersiz model_type: {req.model_type}")
+
     try:
-        return analyze_symbol(
-            symbol=req.symbol, auto_optimize=req.auto_optimize,
-            threshold=req.threshold, stop_loss=req.stop_loss, take_profit=req.take_profit,
-            mode=req.mode, allow_short=req.allow_short,
-        )
+        if req.model_type == "3class":
+            from api.engine import analyze_symbol_3class
+            return analyze_symbol_3class(
+                symbol=req.symbol, auto_optimize=req.auto_optimize,
+                long_threshold=req.long_threshold, short_threshold=req.short_threshold,
+                stop_loss=req.stop_loss, take_profit=req.take_profit, mode=req.mode,
+            )
+        else:
+            from api.engine import analyze_symbol
+            return analyze_symbol(
+                symbol=req.symbol, auto_optimize=req.auto_optimize,
+                threshold=req.threshold, stop_loss=req.stop_loss, take_profit=req.take_profit,
+                mode=req.mode,
+            )
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=503,
+                            detail=f"Model bulunamadi: {e}. 3-sinifli model henuz egitilmemis olabilir.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Analiz hatasi: {e}")

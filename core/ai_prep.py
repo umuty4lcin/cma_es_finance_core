@@ -43,19 +43,20 @@ def prepare_lstm_data(df, feature_cols, target_col='target', window_size=20, tra
     X_train, y_train = create_sequences(train_scaled, train_y, window_size)
     X_test, y_test = create_sequences(test_scaled, test_y, window_size)
     
-    # Sınıf Dengesizliği (Class Imbalance) için ağırlıkları hesapla
-    # Bu ağırlıkları modeli eğitirken LSTM'e vereceğiz ki "1" leri bulmaya daha çok odaklansın
-    class_0_count = np.sum(y_train == 0)
-    class_1_count = np.sum(y_train == 1)
-    
-    weight_for_0 = (1 / class_0_count) * (len(y_train) / 2.0)
-    weight_for_1 = (1 / class_1_count) * (len(y_train) / 2.0)
-    class_weights = {0: weight_for_0, 1: weight_for_1}
-    
+    # Sınıf Dengesizliği (Class Imbalance) için ağırlıkları hesapla.
+    # Hem 2-sinifli (0/1) hem cok-sinifli (0/1/2 ...) durumlari destekler.
+    unique_classes = np.unique(y_train)
+    n_samples = len(y_train)
+    class_weights = {}
+    for c in unique_classes:
+        count = np.sum(y_train == c)
+        # sklearn 'balanced' formulu ile ayni: n_samples / (n_classes * count)
+        class_weights[int(c)] = (1 / count) * (n_samples / len(unique_classes))
+
     print("\n--- Veri Bölünme Raporu ---")
     print(f"Eğitim Seti (Train): {len(X_train)} blok")
     print(f"Test Seti (Test): {len(X_test)} blok")
-    print(f"Sınıf Ağırlıkları: 0 (Bekle) = {weight_for_0:.2f}, 1 (Alım) = {weight_for_1:.2f}")
+    print(f"Sınıf Ağırlıkları: {class_weights}")
     print(f"LSTM Girdi Şekli (X_train): {X_train.shape} -> (Satır Sayısı, Zaman Adımı, Öznitelik Sayısı)")
-    
+
     return X_train, y_train, X_test, y_test, scaler, class_weights, test_df

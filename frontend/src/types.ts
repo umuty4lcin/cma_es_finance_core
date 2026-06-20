@@ -20,12 +20,17 @@ export interface Marker {
 
 export interface AnalyzeResponse {
   symbol: string
+  model_type?: string  // '3class' ise asagidaki params 3-sinifli yapida olur
   params: {
-    threshold: number
+    // 2-sinifli alanlar (model_type === '3class' iken yok)
+    threshold?: number
+    // 3-sinifli alanlar (model_type === '3class' iken var)
+    long_threshold?: number
+    short_threshold?: number
+    // Ortak
     stop_loss: number
     take_profit: number
     mode: string
-    allow_short: boolean
     auto_optimize: boolean
   }
   metrics: {
@@ -48,7 +53,14 @@ export interface AnalyzeResponse {
     short: Marker[]
     exit: Marker[]
   }
-  predictions: number[]
+  // 2-sinifli model: tek olasilik dizisi
+  predictions?: number[]
+  // 3-sinifli model: ucu birden
+  predictions_3class?: {
+    p_down: number[]
+    p_flat: number[]
+    p_up: number[]
+  }
   radar: {
     labels: string[]
     values: number[]
@@ -58,10 +70,15 @@ export interface AnalyzeResponse {
 
 export interface AnalyzeRequest {
   symbol: string
+  model_type: '2class' | '3class'
   auto_optimize: boolean
+  // 2-sinifli
   threshold?: number
+  // 3-sinifli
+  long_threshold?: number
+  short_threshold?: number
+  // Ortak
   stop_loss?: number
   take_profit?: number
   mode: string
-  allow_short: boolean
 }

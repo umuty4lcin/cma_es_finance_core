@@ -34,5 +34,35 @@ def build_lstm_model(input_shape):
     # Modeli Derleme
     # binary_crossentropy: Sadece 1 ve 0 olan sınıflandırmalar için en iyi kayıp (hata) hesaplama yöntemidir.
     model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-    
+
+    return model
+
+
+def build_lstm_3class_model(input_shape, n_classes=3):
+    """
+    3-sinifli yon siniflandirmasi icin LSTM mimarisi (short destegi).
+
+    Cikis: softmax ile [P_asagi, P_yatay, P_yukari] olasiliklari (toplam = 1).
+
+    2-sinifli build_lstm_model ile ayni govde; sadece cikis katmani ve kayip
+    fonksiyonu cok-sinifli icin uyarlandi.
+    """
+    model = Sequential()
+    model.add(Input(shape=input_shape))
+
+    model.add(LSTM(units=64, return_sequences=True))
+    model.add(Dropout(0.2))
+
+    model.add(LSTM(units=32, return_sequences=False))
+    model.add(Dropout(0.2))
+
+    model.add(Dense(units=16, activation='relu'))
+
+    # Cikis: cok-sinifli softmax
+    model.add(Dense(units=n_classes, activation='softmax'))
+
+    # sparse_categorical_crossentropy: y'nin one-hot olmasi gerekmez, tam sayi etiketler yeterli
+    model.compile(optimizer='adam',
+                  loss='sparse_categorical_crossentropy',
+                  metrics=['accuracy'])
     return model

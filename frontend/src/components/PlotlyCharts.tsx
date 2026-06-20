@@ -77,23 +77,55 @@ export function RadarChart({ data }: { data: AnalyzeResponse }) {
 }
 
 // --- LSTM Olasilik Dagilimi ---
+// 2-sinifli model: tek histogram (P_yukseliş) + esik cizgisi
+// 3-sinifli model: ust uste 3 histogram (P_asagi/P_yatay/P_yukari) + 2 esik
 export function ProbHistogram({ data }: { data: AnalyzeResponse }) {
+  if (data.model_type === '3class' && data.predictions_3class) {
+    const p = data.predictions_3class
+    const traces: any[] = [
+      { x: p.p_down, type: 'histogram', nbinsx: 40, name: 'P_asagi',
+        marker: { color: '#ef553b' }, opacity: 0.6 },
+      { x: p.p_flat, type: 'histogram', nbinsx: 40, name: 'P_yatay',
+        marker: { color: '#a5a5a5' }, opacity: 0.4 },
+      { x: p.p_up, type: 'histogram', nbinsx: 40, name: 'P_yukari',
+        marker: { color: '#00cc96' }, opacity: 0.6 },
+    ]
+    const longThr = data.params.long_threshold ?? 0.5
+    const shortThr = data.params.short_threshold ?? 0.5
+    const layout: any = {
+      ...DARK, height: 300, margin: { t: 30, r: 20, b: 40, l: 50 },
+      barmode: 'overlay',
+      xaxis: { title: 'Olasilik', gridcolor: '#1c2230', range: [0, 1] },
+      yaxis: { title: 'Mum Sayisi', gridcolor: '#1c2230' },
+      legend: { orientation: 'h', y: 1.1 },
+      shapes: [
+        { type: 'line', x0: longThr, x1: longThr, y0: 0, y1: 1, yref: 'paper',
+          line: { color: '#00cc96', dash: 'dash', width: 2 } },
+        { type: 'line', x0: shortThr, x1: shortThr, y0: 0, y1: 1, yref: 'paper',
+          line: { color: '#ef553b', dash: 'dash', width: 2 } },
+      ],
+    }
+    return <Plot data={traces} layout={layout} config={CONFIG} style={{ width: '100%' }} />
+  }
+
+  // 2-sinifli yol (mevcut)
   const traces: any[] = [{
-    x: data.predictions, type: 'histogram', nbinsx: 40,
+    x: data.predictions ?? [], type: 'histogram', nbinsx: 40,
     marker: { color: '#636efa' },
   }]
+  const thr = data.params.threshold ?? 0.5
   const layout: any = {
     ...DARK, height: 300, margin: { t: 30, r: 20, b: 40, l: 50 },
     xaxis: { title: 'Yukselis Olasiligi', gridcolor: '#1c2230', range: [0, 1] },
     yaxis: { title: 'Mum Sayisi', gridcolor: '#1c2230' },
     shapes: [{
-      type: 'line', x0: data.params.threshold, x1: data.params.threshold,
-      y0: 0, y1: 1, yref: 'paper', line: { color: '#ef553b', dash: 'dash', width: 2 },
+      type: 'line', x0: thr, x1: thr, y0: 0, y1: 1, yref: 'paper',
+      line: { color: '#ef553b', dash: 'dash', width: 2 },
     }],
     annotations: [{
-      x: data.params.threshold, y: 1, yref: 'paper', text: `Esik %${(data.params.threshold * 100).toFixed(0)}`,
+      x: thr, y: 1, yref: 'paper', text: `Esik %${(thr * 100).toFixed(0)}`,
       showarrow: false, font: { color: '#ef553b', size: 11 }, xanchor: 'left',
     }],
   }
-  return <Plot data={traces} layout={layout} config={CONFIG} style={{ width: '100%' }} useResizeHandler />
+  return <Plot data={traces} layout={layout} config={CONFIG} style={{ width: '100%' }} />
 }
