@@ -1,6 +1,50 @@
+/* Topbar + sekmeler */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px;
+  background: #11151c;
+  border-bottom: 1px solid #1c2230;
+  color: #e6e6e6;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.brand h1 { margin: 0; font-size: 22px; }
+.brand .subtitle { color: #9aa4b2; font-size: 12px; }
+.tabs { display: flex; gap: 4px; }
+.tab {
+  padding: 9px 18px;
+  background: transparent;
+  color: #9aa4b2;
+  border: 1px solid #2a2f3a;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.tab.active { background: #ef4444; color: white; border-color: #ef4444; }
+
+.portfolio-wrap {
+  padding: 24px 32px;
+  background: #0e1117;
+  min-height: calc(100vh - 70px);
+  color: #e6e6e6;
+}
+
+/* Karsilastirma tablosu */
+.cmp-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.cmp-table th, .cmp-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #1c2230; }
+.cmp-table th { color: #9aa4b2; font-weight: 500; }
+
+/* Trade blotter */
+.blotter-wrap { max-height: 420px; overflow-y: auto; }
+.blotter { width: 100%; border-collapse: collapse; font-size: 12px; }
+.blotter th, .blotter td { text-align: left; padding: 6px 10px; border-bottom: 1px solid #1c2230; white-space: nowrap; }
+.blotter th { color: #9aa4b2; font-weight: 500; position: sticky; top: 0; background: #11151c; }
+
 .app-layout {
   display: flex;
-  min-height: 100vh;
+  min-height: calc(100vh - 70px);
   color: #e6e6e6;
 }
 

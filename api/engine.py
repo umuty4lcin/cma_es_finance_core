@@ -137,8 +137,7 @@ def analyze_symbol(symbol: str, auto_optimize: bool = True,
     test_df, preds = _prepare(symbol)
 
     if auto_optimize:
-        with contextlib.redirect_stdout(io.StringIO()):
-            t, sl, tp = run_cma_optimization(preds.reshape(-1, 1), test_df, window_size=WINDOW)
+        t, sl, tp = _cma_2class(symbol, preds, test_df)
     else:
         t, sl, tp = float(threshold), float(stop_loss), float(take_profit)
 
@@ -192,6 +191,107 @@ def analyze_symbol(symbol: str, auto_optimize: bool = True,
         "markers": {"long": long_markers, "short": short_markers, "exit": exit_markers},
         "predictions": [round(float(p), 4) for p in preds],
         "radar": _radar(rdf),
+        "initial_capital": INITIAL_CAPITAL,
+    }
+
+
+# 2-sinifli CMA sonuclari icin onbellek (deterministik, seed=42 -> sembol basina sabit)
+_cma_cache_2class = {}
+
+
+def _cma_2class(symbol, preds, test_df):
+    """2-sinifli CMA-ES sonucunu onbellekten dondurur (yoksa hesaplar)."""
+    if symbol not in _cma_cache_2class:
+        with contextlib.redirect_stdout(io.StringIO()):
+            _cma_cache_2class[symbol] = run_cma_optimization(
+                preds.reshape(-1, 1), test_df, window_size=WINDOW)
+    return _cma_cache_2class[symbol]
+
+
+def run_portfolio(symbols, max_positions=4, auto_optimize=True, sizing="fixed"):
+    """
+    Paylasimli-sermaye portfoy backtest'i (2-sinifli, long-only).
+
+    Tum hisseler TEK 10.000 TL havuzu paylasir; ayni anda en fazla max_positions
+    pozisyon acik olabilir. Sermaye verimliligini gosterir.
+    NOT: Tez kapsami disi (gelecek calisma); demo amacli sunulur.
+    """
+    from core.portfolio_backtest import run_portfolio_backtest
+
+    symbol_data = {}
+    params_list = []
+    isolated_total = 0.0
+
+    for sym in symbols:
+        test_df, preds = _prepare(sym)
+        if auto_optimize:
+            t, sl, tp = _cma_2class(sym, preds, test_df)
+        else:
+            t, sl, tp = 0.50, 0.02, 0.04
+        symbol_data[sym] = {"predictions": preds.reshape(-1, 1), "test_df": test_df,
+                            "threshold": t, "stop_loss": sl, "take_profit": tp}
+        params_list.append({"symbol": sym, "threshold": round(t, 4),
+                            "stop_loss": round(sl, 4), "take_profit": round(tp, 4)})
+        with contextlib.redirect_stdout(io.StringIO()):
+            iso = run_backtest(preds.reshape(-1, 1), test_df, threshold=t, stop_loss=sl,
+                               take_profit=tp, window_size=WINDOW)
+        isolated_total += float(iso["equity"].iloc[-1] - INITIAL_CAPITAL)
+
+    eq_df, tr_df, summary = run_portfolio_backtest(
+        symbol_data, max_positions=max_positions, window_size=WINDOW,
+        sizing=sizing, allow_short=False)
+
+    times = _ts(eq_df.index)
+    eq = eq_df["equity"].values
+    roll = np.maximum.accumulate(eq)
+    dd = np.where(roll > 0, (eq - roll) / roll * 100.0, 0.0)
+    equity_series = [{"time": tt, "value": round(float(e), 2)} for tt, e in zip(times, eq)]
+    drawdown_series = [{"time": tt, "value": round(float(d), 3)} for tt, d in zip(times, dd)]
+
+    per_symbol = []
+    blotter = []
+    if not tr_df.empty:
+        pnl_by = tr_df.groupby("symbol")["pnl"].sum().sort_values(ascending=False)
+        per_symbol = [{"symbol": s, "pnl": round(float(v), 2)} for s, v in pnl_by.items()]
+        tr_sorted = tr_df.sort_values("exit_ts")
+        for _, r in tr_sorted.iterrows():
+            blotter.append({
+                "symbol": r["symbol"],
+                "exit_ts": int(r["exit_ts"].timestamp()),
+                "dir": int(r["dir"]),
+                "net_return_pct": round(float(r["net_return"]) * 100, 3),
+                "pnl": round(float(r["pnl"]), 2),
+                "bars_held": int(r["bars_held"]),
+            })
+
+    ret_pct = summary["net_profit"] / INITIAL_CAPITAL * 100
+    iso_ret_pct = isolated_total / (INITIAL_CAPITAL * len(symbols)) * 100 if symbols else 0.0
+
+    return {
+        "summary": {
+            "net_profit": round(float(summary["net_profit"]), 2),
+            "final_equity": round(float(summary["final_equity"]), 2),
+            "return_pct": round(ret_pct, 2),
+            "max_drawdown": round(float(summary["max_drawdown"]), 2),
+            "win_rate": round(float(summary["win_rate"]), 2),
+            "calmar": round(float(summary["calmar"]), 2),
+            "total_trades": int(summary["total_trades"]),
+            "max_concurrent": int(summary["max_concurrent"]),
+        },
+        "comparison": {
+            "isolated_capital": INITIAL_CAPITAL * len(symbols),
+            "isolated_profit": round(isolated_total, 2),
+            "isolated_return_pct": round(iso_ret_pct, 2),
+            "portfolio_capital": INITIAL_CAPITAL,
+            "portfolio_profit": round(float(summary["net_profit"]), 2),
+            "portfolio_return_pct": round(ret_pct, 2),
+        },
+        "equity": equity_series,
+        "drawdown": drawdown_series,
+        "per_symbol": per_symbol,
+        "blotter": blotter,
+        "params": params_list,
+        "max_positions": max_positions,
         "initial_capital": INITIAL_CAPITAL,
     }
 

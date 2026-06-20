@@ -1,4 +1,4 @@
-import type { AnalyzeRequest, AnalyzeResponse } from './types'
+import type { AnalyzeRequest, AnalyzeResponse, PortfolioRequest, PortfolioResponse } from './types'
 
 export async function fetchSymbols(): Promise<string[]> {
   const r = await fetch('/api/symbols')
@@ -16,6 +16,19 @@ export async function analyze(req: AnalyzeRequest): Promise<AnalyzeResponse> {
   if (!r.ok) {
     const err = await r.json().catch(() => ({ detail: 'Bilinmeyen hata' }))
     throw new Error(err.detail ?? 'Analiz basarisiz')
+  }
+  return r.json()
+}
+
+export async function runPortfolio(req: PortfolioRequest): Promise<PortfolioResponse> {
+  const r = await fetch('/api/portfolio', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(req),
+  })
+  if (!r.ok) {
+    const err = await r.json().catch(() => ({ detail: 'Bilinmeyen hata' }))
+    throw new Error(err.detail ?? 'Portfoy basarisiz')
   }
   return r.json()
 }

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import * as PlotlyModule from 'plotly.js-dist-min'
-import type { AnalyzeResponse } from '../types'
+import type { AnalyzeResponse, TimeValue } from '../types'
 
 // react-plotly.js'in CJS/ESM interop sorunlarini tamamen atlatmak icin
 // Plotly'yi dogrudan saran kucuk bir React bileseni.
@@ -23,8 +23,10 @@ const DARK = {
 }
 const CONFIG = { displayModeBar: false, responsive: true }
 
-// --- Kasa + Drawdown (iki panel) ---
-export function EquityDrawdownChart({ data }: { data: AnalyzeResponse }) {
+// --- Kasa + Drawdown (iki panel) --- (hem tek-hisse hem portfoy yaniti kabul eder)
+export function EquityDrawdownChart(
+  { data }: { data: { equity: TimeValue[]; drawdown: TimeValue[]; initial_capital: number } },
+) {
   const x = data.equity.map((e) => e.time * 1000)
   const eq = data.equity.map((e) => e.value)
   const ddx = data.drawdown.map((d) => d.time * 1000)
@@ -54,6 +56,22 @@ export function EquityDrawdownChart({ data }: { data: AnalyzeResponse }) {
     }],
   }
   return <Plot data={traces} layout={layout} config={CONFIG} style={{ width: '100%' }} useResizeHandler />
+}
+
+// --- Portfoy: Hisse Bazinda PnL Bar ---
+export function PerSymbolPnLBar({ data }: { data: { symbol: string; pnl: number }[] }) {
+  const traces: any[] = [{
+    x: data.map((d) => d.symbol),
+    y: data.map((d) => d.pnl),
+    type: 'bar',
+    marker: { color: data.map((d) => (d.pnl >= 0 ? '#00cc96' : '#ef553b')) },
+  }]
+  const layout: any = {
+    ...DARK, height: 320, margin: { t: 20, r: 20, b: 40, l: 60 },
+    xaxis: { gridcolor: '#1c2230' },
+    yaxis: { title: 'PnL (TL)', gridcolor: '#1c2230' },
+  }
+  return <Plot data={traces} layout={layout} config={CONFIG} style={{ width: '100%' }} />
 }
 
 // --- Hisse Durumu Radari ---

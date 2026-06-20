@@ -5,9 +5,11 @@ import Controls from './components/Controls'
 import KpiCards from './components/KpiCards'
 import PriceChart from './components/PriceChart'
 import { EquityDrawdownChart, RadarChart, ProbHistogram } from './components/PlotlyCharts'
+import PortfolioPage from './components/PortfolioPage'
 import './App.css'
 
 function App() {
+  const [tab, setTab] = useState<'single' | 'portfolio'>('single')
   const [symbols, setSymbols] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -31,17 +33,31 @@ function App() {
   }
 
   return (
-    <div className="app-layout">
-      <aside className="sidebar">
-        <Controls symbols={symbols} loading={loading} onAnalyze={onAnalyze} />
-      </aside>
-
-      <main className="main">
-        <header className="header">
+    <div>
+      <div className="topbar">
+        <div className="brand">
           <h1>CMA-ES Finance Manager</h1>
-          <p className="subtitle">Global LSTM Tahmin Modeli + CMA-ES Evrimsel Risk Optimizasyonu | BIST 15dk</p>
-        </header>
+          <span className="subtitle">Global LSTM + CMA-ES Evrimsel Risk Optimizasyonu | BIST 15dk</span>
+        </div>
+        <nav className="tabs">
+          <button className={tab === 'single' ? 'tab active' : 'tab'} onClick={() => setTab('single')}>
+            Tek Hisse Analizi
+          </button>
+          <button className={tab === 'portfolio' ? 'tab active' : 'tab'} onClick={() => setTab('portfolio')}>
+            Portfoy
+          </button>
+        </nav>
+      </div>
 
+      {tab === 'portfolio' ? (
+        <div className="portfolio-wrap"><PortfolioPage /></div>
+      ) : (
+      <div className="app-layout">
+        <aside className="sidebar">
+          <Controls symbols={symbols} loading={loading} onAnalyze={onAnalyze} />
+        </aside>
+
+        <main className="main">
         {error && <div className="error-box">Hata: {error}</div>}
 
         {!result && !loading && (
@@ -95,7 +111,9 @@ function App() {
             </div>
           </>
         )}
-      </main>
+        </main>
+      </div>
+      )}
     </div>
   )
 }

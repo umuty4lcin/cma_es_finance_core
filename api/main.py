@@ -86,3 +86,26 @@ def analyze(req: AnalyzeRequest):
                             detail=f"Model bulunamadi: {e}. 3-sinifli model henuz egitilmemis olabilir.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Analiz hatasi: {e}")
+
+
+class PortfolioRequest(BaseModel):
+    symbols: list[str] = SYMBOLS
+    max_positions: int = 4
+    auto_optimize: bool = True
+    sizing: str = "fixed"   # 'fixed' | 'dynamic'
+
+
+@app.post("/api/portfolio")
+def portfolio(req: PortfolioRequest):
+    """Paylasimli-sermaye portfoy backtest'i (2-sinifli, long-only). Tez kapsami disi (gelecek calisma)."""
+    bad = [s for s in req.symbols if s not in SYMBOLS]
+    if bad:
+        raise HTTPException(status_code=400, detail=f"Bilinmeyen sembol(ler): {bad}")
+    if not req.symbols:
+        raise HTTPException(status_code=400, detail="En az bir sembol secilmeli.")
+    from api.engine import run_portfolio
+    try:
+        return run_portfolio(req.symbols, max_positions=req.max_positions,
+                             auto_optimize=req.auto_optimize, sizing=req.sizing)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Portfoy hatasi: {e}")

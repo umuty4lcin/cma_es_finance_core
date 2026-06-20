@@ -68,6 +68,48 @@ export interface AnalyzeResponse {
   initial_capital: number
 }
 
+export interface PortfolioRequest {
+  symbols: string[]
+  max_positions: number
+  auto_optimize: boolean
+  sizing: string
+}
+
+export interface PortfolioResponse {
+  summary: {
+    net_profit: number
+    final_equity: number
+    return_pct: number
+    max_drawdown: number
+    win_rate: number
+    calmar: number
+    total_trades: number
+    max_concurrent: number
+  }
+  comparison: {
+    isolated_capital: number
+    isolated_profit: number
+    isolated_return_pct: number
+    portfolio_capital: number
+    portfolio_profit: number
+    portfolio_return_pct: number
+  }
+  equity: TimeValue[]
+  drawdown: TimeValue[]
+  per_symbol: { symbol: string; pnl: number }[]
+  blotter: {
+    symbol: string
+    exit_ts: number
+    dir: number
+    net_return_pct: number
+    pnl: number
+    bars_held: number
+  }[]
+  params: { symbol: string; threshold: number; stop_loss: number; take_profit: number }[]
+  max_positions: number
+  initial_capital: number
+}
+
 export interface AnalyzeRequest {
   symbol: string
   model_type: '2class' | '3class'
